@@ -184,24 +184,18 @@ function handleErrorCase(error) {
 }
 
 async function fetchWeatherData(query) {
-    const baseUrl = "https://api.weatherapi.com/v1/current.json";
-    const apiKey = "39806489ebca4970b5664256252301";
-
     loader.style.display = "block";
     aqiDetailEl.style.display = "flex";
     weatherBody.style.display = "none";
-    
-    const url = `${baseUrl}?key=${apiKey}&q=${query}&aqi=yes`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(`/api/weather?city=${encodeURIComponent(query)}`);
 
         if (!response.ok) {
-            throw new Error(response.status === 400 ? "City not found. Please check the city name and try again." : `Error: ${response.status} ${response.statusText}`)
+            throw new Error("City not found. Please check the city name and try again.");
         }
 
         const weatherData = await response.json();
-        console.log(weatherData);
 
         clearWeatherDetails();
         if(errorCase) errorCase.innerHTML = "";
@@ -224,7 +218,6 @@ async function getUserLocation() {
         async(position) => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            console.log(`User location: lat = ${lat}, lon = ${lon}`);
             fetchWeatherData(`${lat}, ${lon}`);
             locationDiv.classList.add("remove");
         }, 
@@ -244,11 +237,8 @@ async function checkWeather(city) {
 }
 
 async function fetchCityNameSuggestions(query) {
-    const apiKey = "7298f5b7e190798731859346aed56c72";
-    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`;
-
     try{
-        const response = await fetch(url);
+        const response = await fetch(`/api/suggestions?query=${encodeURIComponent(query)}`);
         if(!response.ok) throw new Error("Failed to fetch city suggestions.");
         return await response.json();
     }catch(error) {
