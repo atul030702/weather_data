@@ -22,7 +22,6 @@ function updateUI(data) {
         document.createTextNode(`${cityName}`)
     );
     cityNameEl.appendChild(cityNameWrapper);
-    console.log(cityName);
 
     const weatherDescriptionImgWrapper = document.createDocumentFragment();
     const weatherImageFromCdn = data?.current?.condition?.icon;
